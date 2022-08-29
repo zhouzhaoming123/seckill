@@ -19,7 +19,10 @@ public enum RespBeanEnum {
 
     LOGIN_ERROR(500000,"用户名或密码不正确"),
     MOBILE_ERROR(500001,"手机号码格式不正确"),
-    BIND_EXCEPTION(500002,"参数校验异常")
+    BIND_EXCEPTION(500002,"参数校验异常"),
+
+    EMPTY_STOCK(500500,"库存不足"),
+    BUY_COUNT_ERROR(500501,"该商品每人限购一件")
     ;
 
     private final Integer code;
