@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,8 +42,13 @@ public class GoodsController {
     @Autowired
     private GoodsService goodsService;
 
+    @Autowired
+    private RedisTemplate<String,Object> redisTemplate;
+
     /**
      * 跳转商品页面
+     * windows（32G） 15W 优化前QPS：996.2
+     *
      * @return
      */
     @ApiOperation(value = "跳转商品页面", notes = "跳转商品页面")
@@ -58,7 +64,11 @@ public class GoodsController {
 //            return "login";
 //        }
         model.addAttribute("user", user);
-        List<GoodsVo> goodsVo = goodsService.findGoodsVo();
+        List<GoodsVo> goodsVo = (List<GoodsVo>) redisTemplate.opsForValue().get("seckill_goods");
+        if (goodsVo == null){
+            goodsVo = goodsService.findGoodsVo();
+            redisTemplate.opsForValue().set("seckill_goods",goodsVo);
+        }
         log.info("goodsVo: " + JSONObject.toJSONString(goodsVo));
         return goodsVo;
     }

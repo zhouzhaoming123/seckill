@@ -17,11 +17,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,13 +44,19 @@ public class SeckillController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private RedisTemplate<String,Object> redisTemplate;
+
     /**
-     * 跳转商品页面
+     * 秒杀商品
+     * windows（32G） 15W 优化前QPS：1041.7
+     *              redis  795.3
      * @return
      */
     @ApiOperation(value = "秒杀", notes = "秒杀")
     @PostMapping("/doSeckill")
-    public JSONObject toList(Model model, User user, @RequestBody Long goodsId){
+    public JSONObject doSecKill(Model model, User user, Long goodsId){
+        log.info("doSecKill");
         JSONObject resultObj=new JSONObject();
 
         if (user == null){
@@ -66,9 +70,10 @@ public class SeckillController {
             resultObj.put("message",RespBeanEnum.EMPTY_STOCK.getMessage());
             return resultObj;
         }
-        SeckillOrder seckillOrder = seckillOrderService.getOne(new QueryWrapper<SeckillOrder>().lambda()
-                .eq(SeckillOrder::getUserId, user.getId())
-                .eq(SeckillOrder::getGoodsId, goodsId));
+//        SeckillOrder seckillOrder = seckillOrderService.getOne(new QueryWrapper<SeckillOrder>().lambda()
+//                .eq(SeckillOrder::getUserId, user.getId())
+//                .eq(SeckillOrder::getGoodsId, goodsId));
+        SeckillOrder seckillOrder = (SeckillOrder) redisTemplate.opsForValue().get("order:" + user.getId() + ":" + goods.getId());
         if (seckillOrder != null){
             resultObj.put("code",RespBeanEnum.BUY_COUNT_ERROR.getCode());
             resultObj.put("message",RespBeanEnum.BUY_COUNT_ERROR.getMessage());
