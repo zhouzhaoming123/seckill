@@ -14,6 +14,7 @@ import com.zzmhome.seckill.service.SeckillOrderService;
 import com.zzmhome.seckill.vo.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +42,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
     @Override
     @Transactional
     public Order secKill(User user, GoodsVo goods) {
+        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
         //秒杀商品表减库存
         SeckillGoods seckillGoods = seckillGoodsService.getOne(new QueryWrapper<SeckillGoods>().lambda()
                 .eq(SeckillGoods::getGoodsId, goods.getId()));
@@ -52,7 +54,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
         boolean seckillGoodsResult = seckillGoodsService.update(new UpdateWrapper<SeckillGoods>().
                 setSql("seckill_count=seckill_count-1").eq("goods_id",goods.getId()).gt("seckill_count", 0));
 
-        if (!seckillGoodsResult){
+        if (seckillGoods.getSeckillCount() < 1){
+            //判断是否还有库存
+            valueOperations.set("isStockEmpty:" + goods.getId(),"0");
             return null;
         }
         //生成订单
@@ -74,7 +78,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
         seckillOrder.setOrderId(order.getId());
         seckillOrder.setGoodsId(goods.getId());
         seckillOrderService.save(seckillOrder);
-        redisTemplate.opsForValue().set("order:"+user.getId()+":"+goods.getId(),seckillGoods);
+        redisTemplate.opsForValue().set("order:"+user.getId()+":"+goods.getId(),seckillOrder);
         return order;
     }
 }

@@ -38,31 +38,31 @@ public class UserController {
      * 测试发送RabbitMQ消息
      * @param str
      */
-    @ApiOperation(value = "测试MQ", notes = "测试MQ")
-    @PostMapping("/mq")
-    public void mq(String str){
-        mqSender.send(str);
-    }
-
-    @ApiOperation(value = "fanout测试MQ", notes = "fanout测试MQ")
-    @PostMapping("/mq/fanout")
-    public void mqFanout(String str){
-        mqSender.sendFanOut(str);
-    }
-
-    @ApiOperation(value = "direct测试MQ", notes = "direct测试MQ")
-    @PostMapping("/mq/direct")
-    public void mqDirect(@RequestBody MQRequest mqRequest){
-        mqSender.sendDirect01(mqRequest.getMsg01());
-        mqSender.sendDirect02(mqRequest.getMsg02());
-    }
-
-    @ApiOperation(value = "topic测试MQ", notes = "topic测试MQ")
-    @PostMapping("/mq/topic")
-    public void mqTopic(@RequestBody MQRequest mqRequest){
-        mqSender.sendTopic01(mqRequest.getMsg01());
-        mqSender.sendTopic02(mqRequest.getMsg02());
-    }
+//    @ApiOperation(value = "测试MQ", notes = "测试MQ")
+//    @PostMapping("/mq")
+//    public void mq(String str){
+//        mqSender.send(str);
+//    }
+//
+//    @ApiOperation(value = "fanout测试MQ", notes = "fanout测试MQ")
+//    @PostMapping("/mq/fanout")
+//    public void mqFanout(String str){
+//        mqSender.sendFanOut(str);
+//    }
+//
+//    @ApiOperation(value = "direct测试MQ", notes = "direct测试MQ")
+//    @PostMapping("/mq/direct")
+//    public void mqDirect(@RequestBody MQRequest mqRequest){
+//        mqSender.sendDirect01(mqRequest.getMsg01());
+//        mqSender.sendDirect02(mqRequest.getMsg02());
+//    }
+//
+//    @ApiOperation(value = "topic测试MQ", notes = "topic测试MQ")
+//    @PostMapping("/mq/topic")
+//    public void mqTopic(@RequestBody MQRequest mqRequest){
+//        mqSender.sendTopic01(mqRequest.getMsg01());
+//        mqSender.sendTopic02(mqRequest.getMsg02());
+//    }
 
 
 }
