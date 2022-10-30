@@ -11,7 +11,10 @@ import com.zzmhome.seckill.service.OrderService;
 import com.zzmhome.seckill.mapper.OrderMapper;
 import com.zzmhome.seckill.service.SeckillGoodsService;
 import com.zzmhome.seckill.service.SeckillOrderService;
+import com.zzmhome.seckill.utils.MD5Util;
+import com.zzmhome.seckill.utils.UUIDUtil;
 import com.zzmhome.seckill.vo.GoodsVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -80,6 +84,31 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
         seckillOrderService.save(seckillOrder);
         redisTemplate.opsForValue().set("order:"+user.getId()+":"+goods.getId(),seckillOrder);
         return order;
+    }
+
+    @Override
+    public String createPath(User user, Long goodsId) {
+        String str = MD5Util.md5(UUIDUtil.uuid() + "123456");
+        redisTemplate.opsForValue().set("seckillPath:"+user.getId()+":"+goodsId,str,60, TimeUnit.SECONDS);
+        return str;
+    }
+
+    @Override
+    public boolean checkPath(User user, Long goodsId, String path) {
+        if (user==null || goodsId<0 || StringUtils.isEmpty(path)){
+            return false;
+        }
+        String redisPath = (String)redisTemplate.opsForValue().get("seckillPath:" + user.getId() + ":" + goodsId);
+        return path.equals(redisPath);
+    }
+
+    @Override
+    public boolean checkCaptcha(User user, Long goodsId, String captcha) {
+        if (user==null || goodsId<0 || StringUtils.isEmpty(captcha)){
+            return false;
+        }
+        String redisCaptcha = (String)redisTemplate.opsForValue().get("captcha:" + user.getId() + ":" + goodsId);
+        return captcha.equals(redisCaptcha);
     }
 }
 
