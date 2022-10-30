@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.util.concurrent.RateLimiter;
 import com.wf.captcha.ArithmeticCaptcha;
+import com.zzmhome.seckill.config.AccessLimit;
 import com.zzmhome.seckill.exception.GlobalException;
 import com.zzmhome.seckill.exception.GlobalExceptionHandler;
 import com.zzmhome.seckill.pojo.Order;
@@ -165,6 +166,7 @@ public class SeckillController implements InitializingBean {
      * @return
      */
     @ApiOperation(value = "获取秒杀地址", notes = "获取秒杀地址")
+    @AccessLimit(second = 5,maxCount = 5,needLogin = true)
     @GetMapping("/getPath")
     public RespBean getPath(User user, Long goodsId, String captcha, HttpServletRequest request){
         if (user == null){
