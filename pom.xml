@@ -51,6 +51,14 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- fastjson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.83</version>
+        </dependency>
+
         <!-- md5 依赖 -->
         <dependency>
             <groupId>commons-codec</groupId>
@@ -95,6 +103,27 @@
 <!--            <groupId>org.springframework.session</groupId>-->
 <!--            <artifactId>spring-session-data-redis</artifactId>-->
 <!--        </dependency>-->
+
+        <!-- AMQP依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+        <!-- 验证码依赖 -->
+        <dependency>
+            <groupId>com.github.whvcse</groupId>
+            <artifactId>easy-captcha</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+
+        <!-- 令牌桶算法jar -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>22.0</version>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>
