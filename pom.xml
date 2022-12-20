@@ -124,6 +124,19 @@
             <version>22.0</version>
         </dependency>
 
+        <!-- 获取代理对象（事务）-->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+        </dependency>
+
+        <!-- redisson -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.13.6</version>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>
